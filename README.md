@@ -23,6 +23,10 @@ database schema = {
 
 toSet the database parameters before running Application -
 the commands you can use-
+
+
 export DATABASE_NAME='YOUR DATABASE NAME';
+
 export DATABASE_USER='YOUR DATABASE USERNAME';
+
 export DATABASE_PASSWORD='YOUR PASSWORD';
