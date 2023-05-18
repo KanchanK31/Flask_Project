@@ -51,6 +51,7 @@
                             {% if session['user_name'] %}
                             {% if session['user_name'] == i[3] %}
                             <button class="btn btn-danger"><a href="/delete/{{i[4]}}" style="color: white;">Delete</a></button>
+                            <button class="btn btn-dark"><a href="/update_post/{{i[4]}}" style="color: white;">Update</a></button>
                             {% endif %}
                             {% endif %}
                         </td>

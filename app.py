@@ -1,5 +1,6 @@
 from datetime import datetime
 import os
+from dotenv import load_dotenv
 from flask import Flask, render_template,request,redirect,session
 from werkzeug.security import generate_password_hash, check_password_hash
 import psycopg2
@@ -55,6 +56,67 @@ def deletePost(id):
             conn.close()
     return redirect('/')
  
+
+@app.route('/update_post/<int:id>',methods=['GET'])
+def update_blog(id):
+       # Check if user is logged in, if not go back to home page
+    if not session.get('user_name'):
+        return redirect('/')
+    
+    conn = get_db_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute('SELECT user_id FROM users WHERE user_name = %s', (session['user_name'],))
+        user = cur.fetchone()
+        if user:
+                user_id = user[0]
+                cur.execute('SELECT * FROM posts WHERE post_id = %s', (id,))
+                post = cur.fetchone()
+                if(user_id != post[5]):
+                     return redirect('/')
+                conn.commit()
+                cur.close()
+                conn.close()
+                return render_template('update_post.html',data=post)
+        else:
+            return render_template('index.html', message={'error':'Something went wrong'})
+    except psycopg2.IntegrityError:
+        conn.rollback()
+        return render_template('index.html',message={'error':'something went wrong'})
+    return render_template('update_post.html')
+
+@app.route('/update_post/<int:id>',methods=['POST'])
+def update_blog2(id):
+       # Check if user is logged in, if not go back to home page
+    if not session.get('user_name'):
+        return redirect('/')
+    
+    conn = get_db_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute('SELECT user_id FROM users WHERE user_name = %s', (session['user_name'],))
+        user = cur.fetchone()
+        if user:
+                user_id = user[0]
+                cur.execute('SELECT * FROM posts WHERE post_id = %s', (id,))
+                post = cur.fetchone()
+                if(user_id != post[5]):
+                     return redirect('/')
+                post_title = request.form['post_title'] 
+                post_content = request.form['post_content']
+                cur.execute('update posts set post_title = %s,post_content=%s where post_id = %s', (post_title,post_content,id,))
+                conn.commit()
+                cur.close()
+                conn.close()
+                return redirect('/')
+        else:
+            return render_template('index.html', message={'error':'Something went wrong'})
+    except psycopg2.IntegrityError:
+        conn.rollback()
+        return render_template('index.html',message={'error':'something went wrong'})
+    return redirect('/')
+
+
 
 @app.route('/view_post/<int:id>')
 def view_post(id):
