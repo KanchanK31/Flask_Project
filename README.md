@@ -2,6 +2,8 @@
 Here people can signup/login. Then They can post questions. Other users can comment on that post.
 There also functionality of deleting the post.
 
+
+nice to meet you
 database schema = {
     users = {
         user_id,user_name,user_email,user_password
